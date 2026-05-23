@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitMyRoom – Find Furniture That Fits Your Space</title>
+  <meta name="description" content="Search furniture by exact dimensions. Find the perfect bookshelf, desk, dresser, or table that fits your space from IKEA, Amazon, Wayfair, Walmart, and more." />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #2d6a4f;
+      --primary-light: #40916c;
+      --primary-dark: #1b4332;
+      --accent: #f4a261;
+      --bg: #f8f7f4;
+      --card-bg: #ffffff;
+      --text: #2c2c2c;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --radius: 10px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--primary-dark);
+      color: white;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--accent); }
+    nav a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 0.9rem;
+    }
+    nav a:hover { color: white; }
+
+    /* ── AD BANNER TOP ── */
+    .ad-banner-top {
+      background: #f0f0f0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 90px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+    .ad-placeholder {
+      border: 2px dashed #d1d5db;
+      border-radius: 6px;
+      padding: 8px 24px;
+      text-align: center;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: white;
+      text-align: center;
+      padding: 48px 24px 40px;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.82);
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    /* ── SEARCH CARD ── */
+    .search-wrapper {
+      max-width: 820px;
+      margin: -28px auto 32px;
+      padding: 0 16px;
+    }
+    .search-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+      padding: 28px 32px 24px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-group select,
+    .form-group input[type="number"] {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.97rem;
+      color: var(--text);
+      outline: none;
+      background: white;
+      transition: border-color 0.2s;
+    }
+    .form-group select:focus,
+    .form-group input[type="number"]:focus {
+      border-color: var(--primary-light);
+    }
+    .form-group select { min-width: 180px; cursor: pointer; }
+    .form-group input[type="number"] { width: 110px; }
+
+    .dim-group { flex: 1; min-width: 100px; }
+    .dim-group input { width: 100%; }
+
+    .unit-toggle {
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+    }
+    .unit-toggle button {
+      border: 1.5px solid var(--border);
+      background: white;
+      padding: 10px 18px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .unit-toggle button:first-child { border-radius: 8px 0 0 8px; }
+    .unit-toggle button:last-child  { border-radius: 0 8px 8px 0; border-left: none; }
+    .unit-toggle button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .tolerance-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tolerance-row label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .tolerance-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--primary);
+    }
+    .tolerance-val {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 52px;
+      text-align: right;
+    }
+
+    .search-btn {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 1.08rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.2px;
+    }
+    .search-btn:hover  { background: var(--primary-light); }
+    .search-btn:active { transform: scale(0.99); }
+
+    .dim-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main-layout {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 16px 48px;
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      gap: 24px;
+    }
+
+    /* ── RESULTS ── */
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .results-count {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+    .results-count strong { color: var(--text); }
+
+    .sort-select {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.88rem;
+      color: var(--text);
+      background: white;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .product-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.18s, box-shadow 0.18s;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.13);
+    }
+
+    .product-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d1d5db;
+      font-size: 2.5rem;
+    }
+
+    .product-body {
+      padding: 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .store-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .product-name {
+      font-size: 0.93rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.35;
+      flex: 1;
+    }
+
+    .product-dims {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: #f3f4f6;
+      border-radius: 6px;
+      padding: 5px 8px;
+      margin-bottom: 10px;
+      font-family: monospace;
+    }
+
+    .product-price {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+    }
+
+    .view-btn {
+      display: block;
+      text-align: center;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      padding: 9px 0;
+      border-radius: 7px;
+      font-size: 0.87rem;
+      font-weight: 700;
+      transition: background 0.15s;
+    }
+    .view-btn:hover { background: #e08c45; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      grid-column: 1 / -1;
+    }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state h3 { font-size: 1.1rem; margin-bottom: 6px; color: var(--text); }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ── INITIAL STATE ── */
+    .initial-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      grid-column: 1 / -1;
+    }
+    .initial-state .icon { font-size: 3.5rem; margin-bottom: 14px; }
+    .initial-state h3 { font-size: 1.2rem; color: var(--text); margin-bottom: 8px; }
+    .initial-state p { font-size: 0.92rem; max-width: 380px; margin: 0 auto; line-height: 1.6; }
+
+    /* ── SIDEBAR ADS ── */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .ad-sidebar {
+      background: #f0f0f0;
+      border: 2px dashed #d1d5db;
+      border-radius: 10px;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-align: center;
+    }
+    .ad-sidebar-tall {
+      background: #f0f0f0;
+      border: 2px dashed #d1d5db;
+      border-radius: 10px;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-align: center;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--primary-dark);
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      padding: 24px;
+      font-size: 0.82rem;
+    }
+    footer a { color: rgba(255,255,255,0.65); text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: white; }
+    footer p { margin-top: 6px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .hero h1 { font-size: 1.6rem; }
+      .search-card { padding: 20px 16px 18px; }
+      .main-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .form-group select { min-width: 140px; }
+      .dim-group input { width: 80px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Fit<span>My</span>Room</div>
+  <nav>
+    <a href="#">How it works</a>
+    <a href="#">About</a>
+  </nav>
+</header>
+
+<!-- TOP AD BANNER (728×90 Leaderboard) -->
+<div class="ad-banner-top">
+  <div class="ad-placeholder">
+    📢 Advertisement · 728×90<br/>
+    <small>Google AdSense will appear here</small>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Find Furniture That Actually Fits</h1>
+  <p>Enter your space dimensions and we'll find matching furniture from IKEA, Amazon, Wayfair, Walmart, and more.</p>
+</div>
+
+<!-- SEARCH CARD -->
+<div class="search-wrapper">
+  <div class="search-card">
+
+    <div class="form-row">
+      <!-- Furniture Type -->
+      <div class="form-group">
+        <label>Furniture Type</label>
+        <select id="furnitureType">
+          <option value="">— All Types —</option>
+          <option value="bookshelf">Bookshelf</option>
+          <option value="desk">Desk</option>
+          <option value="dresser">Dresser</option>
+          <option value="dining_table">Dining Table</option>
+          <option value="coffee_table">Coffee Table</option>
+          <option value="nightstand">Nightstand</option>
+          <option value="sofa">Sofa</option>
+          <option value="tv_stand">TV Stand</option>
+          <option value="wardrobe">Wardrobe</option>
+          <option value="filing_cabinet">Filing Cabinet</option>
+        </select>
+      </div>
+
+      <!-- Unit Toggle -->
+      <div class="form-group">
+        <label>Unit</label>
+        <div class="unit-toggle">
+          <button class="active" id="btnInch" onclick="setUnit('inch')">inch</button>
+          <button id="btnCm" onclick="setUnit('cm')">cm</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <!-- Width -->
+      <div class="form-group dim-group">
+        <label>Width (W)</label>
+        <input type="number" id="dimW" placeholder="e.g. 36" min="0" step="0.1" />
+      </div>
+      <!-- Depth -->
+      <div class="form-group dim-group">
+        <label>Depth (D)</label>
+        <input type="number" id="dimD" placeholder="e.g. 14" min="0" step="0.1" />
+      </div>
+      <!-- Height -->
+      <div class="form-group dim-group">
+        <label>Height (H)</label>
+        <input type="number" id="dimH" placeholder="e.g. 72" min="0" step="0.1" />
+      </div>
+    </div>
+
+    <!-- Tolerance -->
+    <div class="tolerance-row">
+      <label>±&nbsp;Tolerance</label>
+      <input type="range" id="tolerance" min="0" max="6" step="0.5" value="2" oninput="updateTolerance()" />
+      <span class="tolerance-val" id="toleranceVal">±&nbsp;2 in</span>
+    </div>
+
+    <button class="search-btn" onclick="doSearch()">🔍 &nbsp;Find Matching Furniture</button>
+    <p class="dim-hint">You can fill in just one or two dimensions — all fields are optional.</p>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+
+  <!-- RESULTS AREA -->
+  <div>
+    <div class="results-header" id="resultsHeader" style="display:none;">
+      <span class="results-count" id="resultsCount"></span>
+      <select class="sort-select" id="sortSelect" onchange="sortResults()">
+        <option value="relevance">Sort: Best Match</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+      </select>
+    </div>
+
+    <div class="results-grid" id="resultsGrid">
+      <!-- initial state -->
+      <div class="initial-state">
+        <div class="icon">🛋️</div>
+        <h3>Find furniture that fits your space</h3>
+        <p>Select a furniture type and enter the dimensions of your available space above. We'll show you options from major US retailers that fit perfectly.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="ad-sidebar">
+      📢 Ad<br/><small>250×250</small>
+    </div>
+    <div class="ad-sidebar-tall">
+      📢 Ad<br/><small>160×600<br/>Skyscraper</small>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Use</a>
+    <a href="#">Affiliate Disclosure</a>
+    <a href="#">Contact</a>
+  </div>
+  <p style="margin-top:10px;">
+    © 2026 FitMyRoom. Some links are affiliate links — we may earn a commission at no extra cost to you.
+  </p>
+</footer>
+
+<script>
+// ── DATA ──
+// Sample furniture data (will be replaced with real affiliate data)
+// Dimensions in inches: [W, D, H]
+const FURNITURE_DATA = [
+  // BOOKSHELVES
+  { id:1,  type:'bookshelf', name:'BILLY Bookcase', store:'IKEA', price:79,  dims:[31.5,11,79.5], url:'#', img:'📚' },
+  { id:2,  type:'bookshelf', name:'3-Shelf Bookcase White', store:'Walmart', price:45, dims:[23.6,9.4,35.4], url:'#', img:'📚' },
+  { id:3,  type:'bookshelf', name:'Barrister Lane 5-Shelf', store:'Wayfair', price:189, dims:[35,12,70], url:'#', img:'📚' },
+  { id:4,  type:'bookshelf', name:'HEMNES Bookcase 5 shelves', store:'IKEA', price:199, dims:[35,14.6,77], url:'#', img:'📚' },
+  { id:5,  type:'bookshelf', name:'Sauder 5-Shelf Bookcase', store:'Amazon', price:129, dims:[35.4,13.2,71.1], url:'#', img:'📚' },
+  { id:6,  type:'bookshelf', name:'Threshold 3-Shelf Bookcase', store:'Walmart', price:55, dims:[30,11.5,44], url:'#', img:'📚' },
+
+  // DESKS
+  { id:7,  type:'desk', name:'LINNMON / ADILS Desk', store:'IKEA', price:89, dims:[59,23.6,29.5], url:'#', img:'🖥️' },
+  { id:8,  type:'desk', name:'Realspace Magellan L-Desk', store:'Walmart', price:249, dims:[59.4,59.4,30], url:'#', img:'🖥️' },
+  { id:9,  type:'desk', name:'Tresanti 47" Sit/Stand Desk', store:'Amazon', price:449, dims:[47,23.6,47], url:'#', img:'🖥️' },
+  { id:10, type:'desk', name:'MICKE Desk', store:'IKEA', price:129, dims:[41.4,19.7,29.9], url:'#', img:'🖥️' },
+  { id:11, type:'desk', name:'Ameriwood Dakota L-Desk', store:'Wayfair', price:179, dims:[51.7,51.7,29.6], url:'#', img:'🖥️' },
+  { id:12, type:'desk', name:'Sauder Edge Water Writing Desk', store:'Amazon', price:219, dims:[53.6,23.2,30.2], url:'#', img:'🖥️' },
+
+  // DRESSERS
+  { id:13, type:'dresser', name:'HEMNES 8-drawer dresser', store:'IKEA', price:299, dims:[63,19.7,37.4], url:'#', img:'🗄️' },
+  { id:14, type:'dresser', name:'KULLEN 5-drawer chest', store:'IKEA', price:99, dims:[27.6,15.3,43.3], url:'#', img:'🗄️' },
+  { id:15, type:'dresser', name:'Better Homes 6-Drawer Dresser', store:'Walmart', price:189, dims:[47.3,15.7,31.5], url:'#', img:'🗄️' },
+  { id:16, type:'dresser', name:'Prepac Sonoma 6-Drawer Dresser', store:'Amazon', price:279, dims:[52,18,30.75], url:'#', img:'🗄️' },
+  { id:17, type:'dresser', name:'Granville 6 Drawer Dresser', store:'Wayfair', price:349, dims:[56,18,32], url:'#', img:'🗄️' },
+
+  // DINING TABLES
+  { id:18, type:'dining_table', name:'EKEDALEN Extendable Table', store:'IKEA', price:349, dims:[70.9,35.5,29.5], url:'#', img:'🍽️' },
+  { id:19, type:'dining_table', name:'Mainstays 6-Person Dining Table', store:'Walmart', price:149, dims:[60,35,30], url:'#', img:'🍽️' },
+  { id:20, type:'dining_table', name:'Roundhill Furniture Karven Table', store:'Amazon', price:259, dims:[47.3,31.5,30], url:'#', img:'🍽️' },
+  { id:21, type:'dining_table', name:'Birch Lane Heritage Oval Table', store:'Wayfair', price:599, dims:[84,42,30], url:'#', img:'🍽️' },
+
+  // COFFEE TABLES
+  { id:22, type:'coffee_table', name:'LACK Coffee Table', store:'IKEA', price:59, dims:[35.4,21.7,17.7], url:'#', img:'☕' },
+  { id:23, type:'coffee_table', name:'Mainstays Coffee Table', store:'Walmart', price:45, dims:[40,20,18], url:'#', img:'☕' },
+  { id:24, type:'coffee_table', name:'Bush Furniture Woodland Coffee Table', store:'Amazon', price:149, dims:[48,24,18], url:'#', img:'☕' },
+  { id:25, type:'coffee_table', name:'Mercury Row Arend Coffee Table', store:'Wayfair', price:229, dims:[47.2,27.6,17.7], url:'#', img:'☕' },
+
+  // NIGHTSTANDS
+  { id:26, type:'nightstand', name:'HEMNES Nightstand', store:'IKEA', price:149, dims:[26,14.6,27.6], url:'#', img:'🌙' },
+  { id:27, type:'nightstand', name:'Mainstays 1-Drawer Nightstand', store:'Walmart', price:29, dims:[17.5,11.5,24.5], url:'#', img:'🌙' },
+  { id:28, type:'nightstand', name:'South Shore Gravity 1-Drawer', store:'Amazon', price:89, dims:[19.75,15.5,23.5], url:'#', img:'🌙' },
+  { id:29, type:'nightstand', name:'Alcott Hill Wight 1-Drawer', store:'Wayfair', price:129, dims:[22,16,24], url:'#', img:'🌙' },
+
+  // SOFAS
+  { id:30, type:'sofa', name:'KIVIK Sofa', store:'IKEA', price:799, dims:[90.5,36.6,32.3], url:'#', img:'🛋️' },
+  { id:31, type:'sofa', name:'Mainstays Sofa', store:'Walmart', price:299, dims:[73,32,35], url:'#', img:'🛋️' },
+  { id:32, type:'sofa', name:'Ashley Darcy Loveseat', store:'Amazon', price:449, dims:[64,38,38], url:'#', img:'🛋️' },
+  { id:33, type:'sofa', name:'Birch Lane Lancaster Sofa', store:'Wayfair', price:1199, dims:[93,38,33], url:'#', img:'🛋️' },
+
+  // TV STANDS
+  { id:34, type:'tv_stand', name:'BESTA TV Bench', store:'IKEA', price:219, dims:[70.9,16.1,15.3], url:'#', img:'📺' },
+  { id:35, type:'tv_stand', name:'Mainstays 3-Door TV Stand', store:'Walmart', price:69, dims:[47.4,15.7,23.8], url:'#', img:'📺' },
+  { id:36, type:'tv_stand', name:'Walker Edison 58" TV Stand', store:'Amazon', price:159, dims:[58,15.75,22], url:'#', img:'📺' },
+
+  // WARDROBES
+  { id:37, type:'wardrobe', name:'PAX Wardrobe', store:'IKEA', price:399, dims:[59,23.6,93.1], url:'#', img:'👔' },
+  { id:38, type:'wardrobe', name:'Mainstays 4-Door Wardrobe', store:'Walmart', price:149, dims:[48,20,68], url:'#', img:'👔' },
+  { id:39, type:'wardrobe', name:'Armoire with Hanging Rod', store:'Wayfair', price:549, dims:[55,21,72], url:'#', img:'👔' },
+
+  // FILING CABINETS
+  { id:40, type:'filing_cabinet', name:'ALEX Drawer Unit', store:'IKEA', price:149, dims:[13.8,22.1,27.6], url:'#', img:'🗂️' },
+  { id:41, type:'filing_cabinet', name:'Hirsh 2-Drawer Letter', store:'Amazon', price:89, dims:[14.3,26.6,28.4], url:'#', img:'🗂️' },
+  { id:42, type:'filing_cabinet', name:'Lorell Vertical File Cabinet', store:'Walmart', price:119, dims:[15,26.6,28.4], url:'#', img:'🗂️' },
+];
+
+// ── STATE ──
+let currentUnit = 'inch';
+let currentResults = [];
+
+// ── UNIT TOGGLE ──
+function setUnit(unit) {
+  currentUnit = unit;
+  document.getElementById('btnInch').classList.toggle('active', unit === 'inch');
+  document.getElementById('btnCm').classList.toggle('active', unit === 'cm');
+  updateTolerance();
+}
+
+// ── TOLERANCE DISPLAY ──
+function updateTolerance() {
+  const val = parseFloat(document.getElementById('tolerance').value);
+  const unit = currentUnit === 'cm' ? 'cm' : 'in';
+  document.getElementById('toleranceVal').textContent = `± ${val} ${unit}`;
+}
+
+// ── UNIT CONVERSION ──
+function toInch(val) {
+  return currentUnit === 'cm' ? val / 2.54 : val;
+}
+
+// ── SEARCH ──
+function doSearch() {
+  const type      = document.getElementById('furnitureType').value;
+  const rawW      = document.getElementById('dimW').value;
+  const rawD      = document.getElementById('dimD').value;
+  const rawH      = document.getElementById('dimH').value;
+  const tolerance = parseFloat(document.getElementById('tolerance').value);
+
+  const W = rawW ? toInch(parseFloat(rawW)) : null;
+  const D = rawD ? toInch(parseFloat(rawD)) : null;
+  const H = rawH ? toInch(parseFloat(rawH)) : null;
+  const tol = currentUnit === 'cm' ? tolerance / 2.54 : tolerance;
+
+  // If nothing specified, show all (filtered by type)
+  const hasFilter = type || W !== null || D !== null || H !== null;
+
+  currentResults = FURNITURE_DATA.filter(item => {
+    if (type && item.type !== type) return false;
+    const [iw, id_, ih] = item.dims;
+    if (W !== null && (iw < W - tol || iw > W + tol)) return false;
+    if (D !== null && (id_ < D - tol || id_ > D + tol)) return false;
+    if (H !== null && (ih < H - tol || ih > H + tol)) return false;
+    return true;
+  });
+
+  renderResults();
+}
+
+// ── RENDER ──
+function renderResults() {
+  const grid = document.getElementById('resultsGrid');
+  const header = document.getElementById('resultsHeader');
+  const count = document.getElementById('resultsCount');
+
+  if (currentResults.length === 0) {
+    header.style.display = 'none';
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🔍</div>
+        <h3>No furniture found</h3>
+        <p>Try increasing the tolerance range or adjusting your dimensions.</p>
+      </div>`;
+    return;
+  }
+
+  header.style.display = 'flex';
+  count.innerHTML = `<strong>${currentResults.length}</strong> items found`;
+
+  grid.innerHTML = currentResults.map(item => {
+    const [w, d, h] = item.dims;
+    const displayDims = currentUnit === 'cm'
+      ? `W ${(w*2.54).toFixed(1)} × D ${(d*2.54).toFixed(1)} × H ${(h*2.54).toFixed(1)} cm`
+      : `W ${w}" × D ${d}" × H ${h}"`;
+
+    return `
+      <div class="product-card">
+        <div class="product-img">${item.img}</div>
+        <div class="product-body">
+          <div class="store-badge">${item.store}</div>
+          <div class="product-name">${item.name}</div>
+          <div class="product-dims">${displayDims}</div>
+          <div class="product-price">$${item.price.toLocaleString()}</div>
+          <a class="view-btn" href="${item.url}" target="_blank" rel="noopener">View on ${item.store} →</a>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── SORT ──
+function sortResults() {
+  const sort = document.getElementById('sortSelect').value;
+  if (sort === 'price_asc')  currentResults.sort((a,b) => a.price - b.price);
+  if (sort === 'price_desc') currentResults.sort((a,b) => b.price - a.price);
+  renderResults();
+}
+
+// ── INIT ──
+updateTolerance();
+</script>
+
+</body>
+</html>
