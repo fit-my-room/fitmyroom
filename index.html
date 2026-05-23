@@ -170,6 +170,49 @@
       border-color: var(--primary);
     }
 
+    /* ── STORE FILTER ── */
+    .store-filter-row {
+      margin-bottom: 16px;
+    }
+    .store-filter-row label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .store-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .store-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: white;
+      color: var(--text-muted);
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .store-chip.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    .store-chip:hover:not(.active) {
+      border-color: var(--primary-light);
+      color: var(--primary);
+    }
+
     .tolerance-row {
       display: flex;
       align-items: center;
@@ -487,6 +530,17 @@
       </div>
     </div>
 
+    <!-- Store Filter -->
+    <div class="store-filter-row">
+      <label>Store</label>
+      <div class="store-chips">
+        <div class="store-chip active" data-store="IKEA" onclick="toggleStore(this)">🏠 IKEA</div>
+        <div class="store-chip active" data-store="Amazon" onclick="toggleStore(this)">📦 Amazon</div>
+        <div class="store-chip active" data-store="Wayfair" onclick="toggleStore(this)">🛋️ Wayfair</div>
+        <div class="store-chip active" data-store="Walmart" onclick="toggleStore(this)">🛒 Walmart</div>
+      </div>
+    </div>
+
     <!-- Tolerance -->
     <div class="tolerance-row">
       <label>±&nbsp;Tolerance</label>
@@ -564,10 +618,10 @@ const FURNITURE_DATA = [
   // DESKS
   { id:7,  type:'desk', name:'LINNMON / ADILS Desk', store:'IKEA', price:89, dims:[59,23.6,29.5], url:'#', img:'🖥️' },
   { id:8,  type:'desk', name:'Realspace Magellan L-Desk', store:'Walmart', price:249, dims:[59.4,59.4,30], url:'#', img:'🖥️' },
-  { id:9,  type:'desk', name:'Tresanti 47" Sit/Stand Desk', store:'Amazon', price:449, dims:[47,23.6,47], url:'https://www.amazon.com/s?k=Tresanti+47+sit+stand+desk&tag=fitmyroom-20', img:'🖥️' },
+  { id:9,  type:'desk', name:'Tresanti 47" Sit/Stand Desk', store:'Amazon', price:449, dims:[47,23.6,47], url:'https://www.amazon.com/dp/B081DBGJ8G?tag=fitmyroom-20', img:'🖥️' },
   { id:10, type:'desk', name:'MICKE Desk', store:'IKEA', price:129, dims:[41.4,19.7,29.9], url:'#', img:'🖥️' },
   { id:11, type:'desk', name:'Ameriwood Dakota L-Desk', store:'Wayfair', price:179, dims:[51.7,51.7,29.6], url:'#', img:'🖥️' },
-  { id:12, type:'desk', name:'Sauder Edge Water Writing Desk', store:'Amazon', price:219, dims:[53.6,23.2,30.2], url:'https://www.amazon.com/s?k=Sauder+Edge+Water+writing+desk&tag=fitmyroom-20', img:'🖥️' },
+  { id:12, type:'desk', name:'Sauder Edge Water Writing Desk', store:'Amazon', price:219, dims:[53.6,23.2,30.2], url:'https://www.amazon.com/dp/B002QGJM28?tag=fitmyroom-20', img:'🖥️' },
 
   // DRESSERS
   { id:13, type:'dresser', name:'HEMNES 8-drawer dresser', store:'IKEA', price:299, dims:[63,19.7,37.4], url:'#', img:'🗄️' },
@@ -579,13 +633,13 @@ const FURNITURE_DATA = [
   // DINING TABLES
   { id:18, type:'dining_table', name:'EKEDALEN Extendable Table', store:'IKEA', price:349, dims:[70.9,35.5,29.5], url:'#', img:'🍽️' },
   { id:19, type:'dining_table', name:'Mainstays 6-Person Dining Table', store:'Walmart', price:149, dims:[60,35,30], url:'#', img:'🍽️' },
-  { id:20, type:'dining_table', name:'Roundhill Furniture Karven Table', store:'Amazon', price:259, dims:[47.3,31.5,30], url:'https://www.amazon.com/s?k=Roundhill+Furniture+Karven+dining+table&tag=fitmyroom-20', img:'🍽️' },
+  { id:20, type:'dining_table', name:'Roundhill Furniture Karven Table', store:'Amazon', price:259, dims:[47.3,31.5,30], url:'https://www.amazon.com/dp/B00BD7LBXO?tag=fitmyroom-20', img:'🍽️' },
   { id:21, type:'dining_table', name:'Birch Lane Heritage Oval Table', store:'Wayfair', price:599, dims:[84,42,30], url:'#', img:'🍽️' },
 
   // COFFEE TABLES
   { id:22, type:'coffee_table', name:'LACK Coffee Table', store:'IKEA', price:59, dims:[35.4,21.7,17.7], url:'#', img:'☕' },
   { id:23, type:'coffee_table', name:'Mainstays Coffee Table', store:'Walmart', price:45, dims:[40,20,18], url:'#', img:'☕' },
-  { id:24, type:'coffee_table', name:'Bush Furniture Woodland Coffee Table', store:'Amazon', price:149, dims:[48,24,18], url:'https://www.amazon.com/s?k=Bush+Furniture+Woodland+coffee+table&tag=fitmyroom-20', img:'☕' },
+  { id:24, type:'coffee_table', name:'Bush Furniture Woodland Coffee Table', store:'Amazon', price:149, dims:[48,24,18], url:'https://www.amazon.com/dp/B07TQNQ9WG?tag=fitmyroom-20', img:'☕' },
   { id:25, type:'coffee_table', name:'Mercury Row Arend Coffee Table', store:'Wayfair', price:229, dims:[47.2,27.6,17.7], url:'#', img:'☕' },
 
   // NIGHTSTANDS
@@ -597,7 +651,7 @@ const FURNITURE_DATA = [
   // SOFAS
   { id:30, type:'sofa', name:'KIVIK Sofa', store:'IKEA', price:799, dims:[90.5,36.6,32.3], url:'#', img:'🛋️' },
   { id:31, type:'sofa', name:'Mainstays Sofa', store:'Walmart', price:299, dims:[73,32,35], url:'#', img:'🛋️' },
-  { id:32, type:'sofa', name:'Ashley Darcy Loveseat', store:'Amazon', price:449, dims:[64,38,38], url:'https://www.amazon.com/s?k=Ashley+Darcy+loveseat+sofa&tag=fitmyroom-20', img:'🛋️' },
+  { id:32, type:'sofa', name:'Ashley Darcy Loveseat', store:'Amazon', price:449, dims:[64,38,38], url:'https://www.amazon.com/dp/B07BYZ4GM6?tag=fitmyroom-20', img:'🛋️' },
   { id:33, type:'sofa', name:'Birch Lane Lancaster Sofa', store:'Wayfair', price:1199, dims:[93,38,33], url:'#', img:'🛋️' },
 
   // TV STANDS
@@ -612,7 +666,7 @@ const FURNITURE_DATA = [
 
   // FILING CABINETS
   { id:40, type:'filing_cabinet', name:'ALEX Drawer Unit', store:'IKEA', price:149, dims:[13.8,22.1,27.6], url:'#', img:'🗂️' },
-  { id:41, type:'filing_cabinet', name:'Hirsh 2-Drawer Letter', store:'Amazon', price:89, dims:[14.3,26.6,28.4], url:'https://www.amazon.com/s?k=Hirsh+2+drawer+letter+filing+cabinet&tag=fitmyroom-20', img:'🗂️' },
+  { id:41, type:'filing_cabinet', name:'Hirsh 2-Drawer Letter', store:'Amazon', price:89, dims:[14.3,26.6,28.4], url:'https://www.amazon.com/dp/B004GZ9XSK?tag=fitmyroom-20', img:'🗂️' },
   { id:42, type:'filing_cabinet', name:'Lorell Vertical File Cabinet', store:'Walmart', price:119, dims:[15,26.6,28.4], url:'#', img:'🗂️' },
 ];
 
@@ -640,6 +694,16 @@ function toInch(val) {
   return currentUnit === 'cm' ? val / 2.54 : val;
 }
 
+// ── STORE TOGGLE ──
+function toggleStore(el) {
+  el.classList.toggle('active');
+}
+
+function getSelectedStores() {
+  const chips = document.querySelectorAll('.store-chip.active');
+  return Array.from(chips).map(c => c.dataset.store);
+}
+
 // ── SEARCH ──
 function doSearch() {
   const type      = document.getElementById('furnitureType').value;
@@ -647,17 +711,16 @@ function doSearch() {
   const rawD      = document.getElementById('dimD').value;
   const rawH      = document.getElementById('dimH').value;
   const tolerance = parseFloat(document.getElementById('tolerance').value);
+  const selectedStores = getSelectedStores();
 
   const W = rawW ? toInch(parseFloat(rawW)) : null;
   const D = rawD ? toInch(parseFloat(rawD)) : null;
   const H = rawH ? toInch(parseFloat(rawH)) : null;
   const tol = currentUnit === 'cm' ? tolerance / 2.54 : tolerance;
 
-  // If nothing specified, show all (filtered by type)
-  const hasFilter = type || W !== null || D !== null || H !== null;
-
   currentResults = FURNITURE_DATA.filter(item => {
     if (type && item.type !== type) return false;
+    if (selectedStores.length > 0 && !selectedStores.includes(item.store)) return false;
     const [iw, id_, ih] = item.dims;
     if (W !== null && (iw < W - tol || iw > W + tol)) return false;
     if (D !== null && (id_ < D - tol || id_ > D + tol)) return false;
